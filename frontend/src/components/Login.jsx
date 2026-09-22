@@ -1,5 +1,5 @@
 import { useState } from "react";
-import api from "../api";
+import api from "../axiosInterceptor";
 
 function Login({ onLogin, onShowRegister }) {
   const [email, setEmail] = useState("");

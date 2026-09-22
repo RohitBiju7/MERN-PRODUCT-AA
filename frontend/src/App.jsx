@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import api from "./api";
+import api from "./axiosInterceptor";
 import Navbar from "./components/Navbar";
 import ProductList from "./components/ProductList";
 import ProductTable from "./components/ProductTable";

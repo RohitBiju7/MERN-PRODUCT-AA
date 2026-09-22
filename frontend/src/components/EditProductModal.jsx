@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import api from '../api';
+import api from '../axiosInterceptor';
 
 const EditProductModal = ({ product, onClose, onProductUpdated }) => {
   const [formData, setFormData] = useState({

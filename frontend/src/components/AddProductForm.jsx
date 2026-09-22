@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import api from '../api';
+import api from '../axiosInterceptor';
 
 const AddProductForm = ({ onProductAdded }) => {
   const [formData, setFormData] = useState({

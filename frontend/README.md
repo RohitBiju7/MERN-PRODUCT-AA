@@ -14,3 +14,20 @@ The React Compiler is not enabled on this template because of its impact on dev 
 ## Expanding the ESLint configuration
 
 If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+
+## AWS EC2 and Nginx
+
+The frontend calls the backend through relative `/api` paths. Configure Nginx to remove that prefix before forwarding requests to the Node server:
+
+```nginx
+location /api/ {
+	proxy_pass http://127.0.0.1:3000/;
+	proxy_http_version 1.1;
+	proxy_set_header Host $host;
+	proxy_set_header X-Real-IP $remote_addr;
+	proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+	proxy_set_header X-Forwarded-Proto $scheme;
+}
+```
+
+The backend defaults to port `3000` and can be changed with the backend `PORT` environment variable. Keep the frontend and backend on the same public origin so browser requests to `/api/...` reach this proxy location.
