@@ -12,9 +12,6 @@ const authRoutes = require('./routes/authRoutes.js');
 // Prevent Mongoose from hanging requests indefinitely if DB drops
 mongoose.set('bufferCommands', false);
 
-// Connect to MongoDB
-connectDB();
-
 const app = express();
 
 // Disable X-Powered-By header to prevent disclosing version/framework info
@@ -32,6 +29,16 @@ app.use('/api/auth', authRoutes);
 
 const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
+const startServer = async () => {
+  try {
+    await connectDB();
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
+  } catch (error) {
+    console.error(`MongoDB startup failed: ${error.message}`);
+    process.exit(1);
+  }
+};
+
+startServer();
