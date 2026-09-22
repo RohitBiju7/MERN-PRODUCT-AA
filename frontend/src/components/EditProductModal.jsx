@@ -1,0 +1,162 @@
+import React, { useState } from 'react';
+import api from '../api';
+
+const EditProductModal = ({ product, onClose, onProductUpdated }) => {
+  const [formData, setFormData] = useState({
+    title: product.title,
+    price: product.price,
+    image: product.image,
+    rating: typeof product.rating === 'object' ? product.rating.rate : product.rating
+  });
+  const [error, setError] = useState(null);
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError(null);
+
+    try {
+      const res = await api.put(`/products/${product._id}`, {
+        ...formData,
+        price: Number(formData.price),
+        rating: Number(formData.rating)
+      });
+
+      onProductUpdated(res.data);
+      onClose();
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to update product');
+    }
+  };
+
+  const inputStyle = {
+    width: '100%',
+    padding: '8px',
+    borderRadius: '6px',
+    border: '1px solid var(--border-color)',
+    backgroundColor: 'var(--input-bg)',
+    color: 'var(--text-main)',
+    outline: 'none'
+  };
+
+  return (
+    <div style={{
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      width: '100vw',
+      height: '100vh',
+      backgroundColor: 'rgba(0,0,0,0.6)',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      zIndex: 1000
+    }}>
+      <div style={{
+        backgroundColor: 'var(--card-bg)',
+        padding: '2rem',
+        borderRadius: '8px',
+        width: '100%',
+        maxWidth: '500px',
+        boxShadow: '0 10px 25px rgba(0,0,0,0.4)',
+        border: '1px solid var(--border-color)'
+      }}>
+        <h3 style={{ marginBottom: '1rem', color: 'var(--text-main)' }}>Edit Product</h3>
+        
+        {error && <p style={{ color: '#ef4444', marginBottom: '1rem' }}>{error}</p>}
+
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <div>
+            <label htmlFor="edit-title" style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, marginBottom: '4px', color: 'var(--text-main)' }}>Title</label>
+            <input
+              id="edit-title"
+              type="text"
+              name="title"
+              value={formData.title}
+              onChange={handleChange}
+              required
+              style={inputStyle}
+            />
+          </div>
+
+          <div>
+            <label htmlFor="edit-price" style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, marginBottom: '4px', color: 'var(--text-main)' }}>Price ($)</label>
+            <input
+              id="edit-price"
+              type="number"
+              step="0.01"
+              name="price"
+              value={formData.price}
+              onChange={handleChange}
+              required
+              style={inputStyle}
+            />
+          </div>
+
+          <div>
+            <label htmlFor="edit-image" style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, marginBottom: '4px', color: 'var(--text-main)' }}>Image URL</label>
+            <input
+              id="edit-image"
+              type="url"
+              name="image"
+              value={formData.image}
+              onChange={handleChange}
+              required
+              style={inputStyle}
+            />
+          </div>
+
+          <div>
+            <label htmlFor="edit-rating" style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, marginBottom: '4px', color: 'var(--text-main)' }}>Rating (0 - 5)</label>
+            <input
+              id="edit-rating"
+              type="number"
+              step="0.1"
+              name="rating"
+              value={formData.rating}
+              onChange={handleChange}
+              required
+              style={inputStyle}
+            />
+          </div>
+
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '1rem' }}>
+            <button
+              type="button"
+              onClick={onClose}
+              style={{
+                padding: '8px 16px',
+                borderRadius: '6px',
+                border: '1px solid var(--border-color)',
+                backgroundColor: 'var(--bg-main)',
+                color: 'var(--text-main)',
+                cursor: 'pointer'
+              }}
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              style={{
+                padding: '8px 16px',
+                borderRadius: '6px',
+                border: 'none',
+                backgroundColor: '#4f46e5',
+                color: '#ffffff',
+                fontWeight: 600,
+                cursor: 'pointer'
+              }}
+            >
+              Save Changes
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+export default EditProductModal;
